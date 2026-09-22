@@ -4,35 +4,75 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // Other components
     public Transform enemyTransform;
     public GameObject bombPrefab;
     public List<Transform> asteroidTransforms;
-    
+    [Space(30)]
     // Player Listeners
-    public InputActionReference _bombKey; // Click B -> Instantiate Bomb
-    public InputActionReference _moveWASD; // WASD -> move in worldspace
-    
+    public InputActionReference bombKey; // Click B -> Instantiate Bomb
+    public InputActionReference moveWASD; // WASD -> move in worldspace
     // Ints and Floats
-    public int moveSpeed;
-
+    public float maxMoveSpeed;
+    public float accelerationTime;
     
-    // Update is called once per frame
+    private Vector3 velocity;
+
+    void Start()
+    {
+    }
     void Update()
     {
-        Vector2 moveInput =  NormalizeVector2(_moveWASD.action.ReadValue<Vector2>()); // Read the WASD keys vector2 value, and Normalize the output in the declaration
-        Vector3 moveDirection = new Vector2(moveInput.x, moveInput.y); // Take vector2 input (WASD) and convert it to a vector3 
-        transform.position += moveDirection * moveSpeed * Time.deltaTime; // Transform the player position in worldspace based on moveDirection * movespeed over time
+        PlayerMovement();
+
+       CheckBombKeyPressed();
+    }
+
+    #region Movement
+    void PlayerMovement()
+    {
+        Vector2 moveInput = moveWASD.action.ReadValue<Vector2>(); // Take player input (e.g. WASD)
         
-        if (_bombKey.action.WasPressedThisFrame())
-        {   
-            Debug.Log("Bomb key pressed!");
+        if (moveInput == Vector2.zero) // If there is no input, decelerate
+        {
+            velocity = Vector3.Lerp(velocity, Vector3.zero, Time.deltaTime / accelerationTime); // Decelerate to a stop over accelerationTime
+        }
+        else
+        {
+            Vector3 targetVelocity = NormalizeVector2ToVector3(moveInput) * maxMoveSpeed; // Normalize the player inputs and mult by the max speed
+            float accelerationPerSecond = maxMoveSpeed / accelerationTime; // a = delta v / delta t
+            float accelerationDelta = accelerationPerSecond * Time.deltaTime; 
+            
+            Vector3 velocityDiff = targetVelocity - velocity;
+            
+            if (velocityDiff.magnitude <= accelerationDelta)
+            {
+                velocity = targetVelocity;
+            }
+            else
+            {
+                velocity += velocityDiff.normalized * accelerationDelta;
+            }
+        }
+
+        transform.position += velocity * Time.deltaTime;
+    }
+    #endregion
+
+    #region Bomb
+    void CheckBombKeyPressed()
+    {
+        if (bombKey.action.WasPressedThisFrame())
+        {
             Vector3 playerPosition = transform.position;
             Vector3 bombSpawnPosition = playerPosition + new Vector3(0, 1, 0);
-            Instantiate(bombPrefab, bombSpawnPosition, Quaternion.identity); // Quaternion.Identity keeps prefab rotation, consider using transform.position again
+            Instantiate(bombPrefab, bombSpawnPosition, Quaternion.identity);
         }
-        
     }
-    public Vector2 NormalizeVector2(Vector2 input) // Normalizes a vector2
+    #endregion
+    
+    #region Misc
+    public Vector3 NormalizeVector2ToVector3(Vector2 input) // Inputting a vector2 in this function spits out a normalized vector 3 with Z being zero
     {
         float x = input.x;
         float y = input.y;
@@ -41,13 +81,14 @@ public class Player : MonoBehaviour
 
         if (magnitude == 0f)
         {
-            return Vector2.zero;
+            return Vector3.zero;
         }
 
         float normalizedX = x / magnitude;
         float normalizedY = y / magnitude;
 
-        return new Vector2(normalizedX, normalizedY);
+        return new Vector3(normalizedX, normalizedY, 0);
     }
+    #endregion
 }
 
