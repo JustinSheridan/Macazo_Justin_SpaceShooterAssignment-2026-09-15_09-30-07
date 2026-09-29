@@ -20,6 +20,16 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        // 
+        if (moveWASD.action != null)
+        {
+            moveWASD.action.Enable();
+        }
+        
+        if (bombKey.action != null)
+        {
+            bombKey.action.Enable();
+        }
     }
     void Update()
     {
