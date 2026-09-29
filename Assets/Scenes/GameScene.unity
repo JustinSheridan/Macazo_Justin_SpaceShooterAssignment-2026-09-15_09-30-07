@@ -375,6 +375,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 646830543618971024, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
+      propertyPath: arrivalDistance
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 646830543618971024, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
+      propertyPath: maxFloatDistance
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4194190890010494449, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
       propertyPath: m_LocalPosition.x
       value: -13
@@ -429,6 +437,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4194190890010494449, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
   m_PrefabInstance: {fileID: 742019646}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &845561414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 845561415}
+  - component: {fileID: 845561416}
+  m_Layer: 0
+  m_Name: Sin LineDrawer
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &845561415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845561414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.65215, y: -0.64226, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &845561416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845561414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06c3a9a4ed5e747a2906defe35898a69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InClassLineDrawScript
+  angles:
+  - 0
+  - 36
+  - 72
+  - 108
+  - 144
+  - 180
+  - 216
+  - 252
+  - 288
+  - 324
+  spaceKey: {fileID: 8124735660039092053, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  cycleDuration: 0.5
 --- !u!1001 &925799359
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -471,7 +536,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
       propertyPath: maxMoveSpeed
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
       propertyPath: playerTransform
@@ -479,8 +544,52 @@ PrefabInstance:
       objectReference: {fileID: 2030902520}
     - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
       propertyPath: accelerationRate
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: asteroidTransforms.Array.size
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[0]'
+      value: 
+      objectReference: {fileID: 742019647}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1220048546}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[2]'
+      value: 
+      objectReference: {fileID: 278059574}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1791284211}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[4]'
+      value: 
+      objectReference: {fileID: 578339796}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[5]'
+      value: 
+      objectReference: {fileID: 1552981067}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[6]'
+      value: 
+      objectReference: {fileID: 304943160}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[7]'
+      value: 
+      objectReference: {fileID: 1282445455}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[8]'
+      value: 
+      objectReference: {fileID: 1522834010}
+    - target: {fileID: 114516115454935764, guid: e3900e4d87ee29c43ad1d9098b51432c, type: 3}
+      propertyPath: 'asteroidTransforms.Array.data[9]'
+      value: 
+      objectReference: {fileID: 14271830}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -494,10 +603,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4138628647630011040, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4194190890010494449, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4
@@ -545,36 +650,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7969683946929540427, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1220048548}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
 --- !u!4 &1220048546 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4194190890010494449, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
   m_PrefabInstance: {fileID: 1220048545}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1220048547 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7969683946929540427, guid: 462add3d0f7c62a4682e9c053b00ec93, type: 3}
-  m_PrefabInstance: {fileID: 1220048545}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1220048548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220048547}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ad36a178a4c04625801cf4cd0ec9a0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Asteroid
-  maxFloatDistance: 2
-  moveSpeed: 1
-  arrivalDistance: 1
 --- !u!1001 &1282445454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1106,8 +1188,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1273894435109820, guid: b262926197932c945b68169dd6fd6c5c, type: 3}
     - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
+      propertyPath: radarRadius
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
       propertyPath: maxMoveSpeed
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
+      propertyPath: numberOfSides
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
       propertyPath: enemyTransform
@@ -1115,11 +1205,15 @@ PrefabInstance:
       objectReference: {fileID: 1441953408}
     - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
       propertyPath: accelerationTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
       propertyPath: movementVelocity
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
+      propertyPath: radarNumberOfSides
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6890330259706833056, guid: abc125f00ae369940b2c5c0275186637, type: 3}
       propertyPath: asteroidTransforms.Array.size
@@ -1192,3 +1286,4 @@ SceneRoots:
   - {fileID: 1282445454}
   - {fileID: 1522834009}
   - {fileID: 14271829}
+  - {fileID: 845561415}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
 
@@ -13,14 +14,19 @@ public class Player : MonoBehaviour
     public InputActionReference bombKey; // Click B -> Instantiate Bomb
     public InputActionReference moveWASD; // WASD -> move in worldspace
     // Ints and Floats
+    // Public
     public float maxMoveSpeed;
     public float accelerationTime;
-    
+    public int radarNumberOfSides;
+    public float radarRadius;
+    // Private
     private Vector3 velocity;
+    private int currentAngleIndex = 0;
+    private float elapsedTime = 0f;
+
 
     void Start()
     {
-        // 
         if (moveWASD.action != null)
         {
             moveWASD.action.Enable();
@@ -36,6 +42,8 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
        CheckBombKeyPressed();
+
+       drawCircleRadar(radarRadius, radarNumberOfSides);
     }
 
     #region Movement
@@ -99,6 +107,31 @@ public class Player : MonoBehaviour
 
         return new Vector3(normalizedX, normalizedY, 0);
     }
+
+    void drawCircleRadar(float radius, int numberOfSides)
+    {
+        float stepAngle = 360.0f / numberOfSides;
+        List<Vector3> points = new();
+        stepAngle *= Mathf.Deg2Rad;
+        float currentAngle = stepAngle;
+        for (int i = 0; i < numberOfSides; i++)
+        {
+            float xPos = Mathf.Cos(currentAngle) * radius;
+            float yPos = Mathf.Sin(currentAngle) * radius;
+            Vector3 newPoint = new Vector3(xPos, yPos);
+            points.Add(newPoint);
+
+            currentAngle += stepAngle;
+        }
+
+        for (int i = 0; i < numberOfSides; i++)
+        {
+            Vector3 startPoint = transform.position+points[i];
+            Vector3 endPoint = transform.position+points[(i + 1) % numberOfSides];
+            Debug.DrawLine(startPoint,endPoint,Color.forestGreen);
+        }
+    }
+
     #endregion
 }
 
