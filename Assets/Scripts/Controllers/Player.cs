@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     // Other components
     public Transform enemyTransform;
     public GameObject bombPrefab;
+    public GameObject powerUpPrefab; 
     public List<Transform> asteroidTransforms;
     [Space(30)]
     // Player Listeners
@@ -17,12 +18,16 @@ public class Player : MonoBehaviour
     // Public
     public float maxMoveSpeed;
     public float accelerationTime;
+    [Space(30)]
     public int radarNumberOfSides;
     public float radarRadius;
+    [Space(30)]
+    public int powerUpNumberOfSides;
+    public float powerUpRadius;
     // Private
     private Vector3 velocity;
-    private int currentAngleIndex = 0;
-    private float elapsedTime = 0f;
+    // private int currentAngleIndex = 0;
+    // private float elapsedTime = 0f;
 
 
     void Start()
@@ -85,6 +90,7 @@ public class Player : MonoBehaviour
             Vector3 playerPosition = transform.position;
             Vector3 bombSpawnPosition = playerPosition + new Vector3(0, 1, 0);
             Instantiate(bombPrefab, bombSpawnPosition, Quaternion.identity);
+            SpawnPowerUpsAroundPlayer(powerUpRadius, powerUpNumberOfSides); // <-------- TEST POWERUPSPAWNS
         }
     }
     #endregion
@@ -107,7 +113,7 @@ public class Player : MonoBehaviour
 
         return new Vector3(normalizedX, normalizedY, 0);
     }
-
+    
     void drawCircleRadar(float radius, int numberOfSides)
     {
         float stepAngle = 360.0f / numberOfSides;
@@ -124,14 +130,44 @@ public class Player : MonoBehaviour
             currentAngle += stepAngle;
         }
 
+        if (enemyTransform != null && Vector3.Distance(transform.position, enemyTransform.position) <= radius) // Check Radius
+        {
+            for (int i = 0; i < numberOfSides; i++) // If Enemy Transform in the Radius, draw lines as red
+            {
+                Vector3 startPoint = transform.position + points[i];
+                Vector3 endPoint = transform.position + points[(i + 1) % numberOfSides];
+                Debug.DrawLine(startPoint, endPoint, Color.red);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < numberOfSides; i++) // Else, draw as green
+            {
+                Vector3 startPoint = transform.position + points[i];
+                Vector3 endPoint = transform.position + points[(i + 1) % numberOfSides];
+                Debug.DrawLine(startPoint, endPoint, Color.forestGreen);
+            }
+        }
+    }
+
+    void SpawnPowerUpsAroundPlayer(float radius, int numberOfSides) // instantiate power-up prefab at each vertex of the polygon
+    {
+        float stepAngle = 360.0f / numberOfSides;
+        stepAngle *= Mathf.Deg2Rad;
+        float currentAngle = stepAngle;
+
         for (int i = 0; i < numberOfSides; i++)
         {
-            Vector3 startPoint = transform.position+points[i];
-            Vector3 endPoint = transform.position+points[(i + 1) % numberOfSides];
-            Debug.DrawLine(startPoint,endPoint,Color.forestGreen);
+            float xPos = Mathf.Cos(currentAngle) * radius;
+            float yPos = Mathf.Sin(currentAngle) * radius;
+            Vector3 offset = new Vector3(xPos, yPos); 
+
+            Vector3 spawnPosition = transform.position + offset; // Instantiate in Polygon shape
+            Instantiate(powerUpPrefab, spawnPosition, Quaternion.identity);
+
+            currentAngle += stepAngle;
         }
     }
 
     #endregion
 }
-
