@@ -9,29 +9,81 @@ public class Player : MonoBehaviour
     public List<Transform> asteroidTransforms;
     
     // Player Listeners
-    public InputActionReference _bombKey; // Click B -> Instantiate Bomb
-    public InputActionReference _moveWASD; // WASD -> move in worldspace
+    public InputActionReference input_bombKey; // Click B -> Instantiate Bomb
+    public InputActionReference input_moveWASD; // WASD -> move in worldspace
     
     // Ints and Floats
-    public int moveSpeed;
-
+    public float moveSpeed;
+    public float accelRate; // Controls acceleration/deceleration rate
     
+    // New movement variables
+    private Vector2 dirMoving = Vector2.zero; // Current input direction
+    private Vector2 velocityMoving = Vector2.zero; // Current velocity
+
     // Update is called once per frame
     void Update()
     {
-        Vector2 moveInput =  NormalizeVector2(_moveWASD.action.ReadValue<Vector2>()); // Read the WASD keys vector2 value, and Normalize the output in the declaration
-        Vector3 moveDirection = new Vector2(moveInput.x, moveInput.y); // Take vector2 input (WASD) and convert it to a vector3 
-        transform.position += moveDirection * moveSpeed * Time.deltaTime; // Transform the player position in worldspace based on moveDirection * movespeed over time
+        HandleMovement(-1);
+        HandleRotation();
         
-        if (_bombKey.action.WasPressedThisFrame())
+        if (input_bombKey.action.WasPressedThisFrame())
         {   
             Debug.Log("Bomb key pressed!");
-            Vector3 playerPosition = transform.position;
-            Vector3 bombSpawnPosition = playerPosition + new Vector3(0, 1, 0);
-            Instantiate(bombPrefab, bombSpawnPosition, Quaternion.identity); // Quaternion.Identity keeps prefab rotation, consider using transform.position again
+            SpawnBomb();
+        }
+    }
+
+
+    public void HandleMovement(int movementMultiplier) // Handles player movement with acceleration/deceleration
+    {
+        // Read and normalize input
+        dirMoving = NormalizeVector2(input_moveWASD.action.ReadValue<Vector2>());
+        
+        // Check if input is not 0
+        if (dirMoving != Vector2.zero)
+        {
+            // Accelerate in dirMoving if dirMoving > 0, 0
+            velocityMoving += dirMoving * accelRate * 2f * Time.deltaTime;
+        }
+        else
+        {
+            // De-accelerate if dirMoving == 0
+            velocityMoving *= (1f - accelRate * Time.deltaTime);
+            
+            // Clamp small values to zero to prevent jitter
+            if (velocityMoving.magnitude < 0.01f)
+            {
+                velocityMoving = Vector2.zero;
+            }
         }
         
+        // Apply velocity to transform
+        Vector3 moveDirection = new Vector3(velocityMoving.x, velocityMoving.y, 0f);
+        transform.position += moveDirection * movementMultiplier * moveSpeed * Time.deltaTime;
     }
+    
+    public void HandleRotation() // Rotates the player sprite in the direction of travel using sine and cosine
+    {
+        if (velocityMoving.magnitude > 0.01f)
+        {
+            float cosAngle = velocityMoving.x / velocityMoving.magnitude;
+            float sinAngle = velocityMoving.y / velocityMoving.magnitude;
+            float angle = Mathf.Atan2(sinAngle, cosAngle) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f); // Subtract 90° to point "up"
+        }
+    }
+    
+    public void SpawnBomb() // Instantiates a bomb and sets its properties based on the player's current state
+    {
+        Vector3 playerPosition = transform.position;
+        Vector3 bombSpawnPosition = playerPosition + new Vector3(0, 1, 0);
+        GameObject bombInstance = Instantiate(bombPrefab, bombSpawnPosition, Quaternion.identity);
+        
+        BombPrefab bombScript = bombInstance.GetComponent<BombPrefab>();
+        bombScript.moveDirection = new Vector3(velocityMoving.x, velocityMoving.y, 0f); // Set direction to current velocity direction
+        bombScript.moveSpeed = moveSpeed * velocityMoving.magnitude; // Set speed to current speed
+    }
+    
     public Vector2 NormalizeVector2(Vector2 input) // Normalizes a vector2
     {
         float x = input.x;
