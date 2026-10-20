@@ -16,14 +16,24 @@ public class Player : MonoBehaviour
     public float moveSpeed;
     public float accelRate; // Controls acceleration/deceleration rate
     
-    // New movement variables
+    // Movement variables
     private Vector2 dirMoving = Vector2.zero; // Current input direction
     private Vector2 velocityMoving = Vector2.zero; // Current velocity
+    private float currentMovementMultiplier = 1f; // Stores the multiplier for the HandleMovement function
+    private float boostEndTime = 0f; // Time when the boost effect ends
+    public float boostDuration = 5f; // Duration of the boost in seconds
 
     // Update is called once per frame
     void Update()
     {
-        HandleMovement(-1);
+        // Reset multiplier if boost has expired
+        if (currentMovementMultiplier != 1f && Time.time >= boostEndTime)
+        {
+            currentMovementMultiplier = 1f;
+        }
+
+        // Pass the currentMultiplier (starts at 1, changes when power-up is picked)
+        HandleMovement(currentMovementMultiplier);
         HandleRotation();
         
         if (input_bombKey.action.WasPressedThisFrame())
@@ -33,8 +43,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    #region Movement
+    public void BoostMovement(float newMultiplier) // Public method called by PowerUpManager to set speed
+    {
+        currentMovementMultiplier = newMultiplier;
+        boostEndTime = Time.time + boostDuration;
+    }
 
-    public void HandleMovement(int movementMultiplier) // Handles player movement with acceleration/deceleration
+
+    public void HandleMovement(float movementMultiplier) // Handles player movement with acceleration/deceleration
     {
         // Read and normalize input
         dirMoving = NormalizeVector2(input_moveWASD.action.ReadValue<Vector2>());
@@ -57,7 +74,7 @@ public class Player : MonoBehaviour
             }
         }
         
-        // Apply velocity to transform
+        // Apply velocity to transform using the provided multiplier
         Vector3 moveDirection = new Vector3(velocityMoving.x, velocityMoving.y, 0f);
         transform.position += moveDirection * movementMultiplier * moveSpeed * Time.deltaTime;
     }
@@ -72,17 +89,26 @@ public class Player : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f); // Subtract 90° to point "up"
         }
     }
+    #endregion
     
+    #region Misc Methods
     public void SpawnBomb() // Instantiates a bomb and sets its properties based on the player's current state
     {
         Vector3 playerPosition = transform.position;
-        Vector3 bombSpawnPosition = playerPosition + new Vector3(0, 1, 0);
+        
+        // Get the direction the player is facing (in the 2D plane)
+        // transform.up gives the "up" direction of the local space, which corresponds to the rotation applied in HandleRotation
+        Vector3 forwardDirection = transform.up; 
+        
+        Vector3 bombSpawnPosition = playerPosition + (forwardDirection * 1f); // Spawns 1 unit in front
+        
         GameObject bombInstance = Instantiate(bombPrefab, bombSpawnPosition, Quaternion.identity);
         
         BombPrefab bombScript = bombInstance.GetComponent<BombPrefab>();
         bombScript.moveDirection = new Vector3(velocityMoving.x, velocityMoving.y, 0f); // Set direction to current velocity direction
         bombScript.moveSpeed = moveSpeed * velocityMoving.magnitude; // Set speed to current speed
     }
+
     
     public Vector2 NormalizeVector2(Vector2 input) // Normalizes a vector2
     {
@@ -101,5 +127,5 @@ public class Player : MonoBehaviour
 
         return new Vector2(normalizedX, normalizedY);
     }
+    #endregion
 }
-
